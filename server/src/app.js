@@ -1,25 +1,35 @@
 require('dotenv').config();
-const apiRouter = require('./routers/api.router');
-const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
 const express = require('express');
-const app = express();
+const {PORT} = process.env
+const morgan = require('morgan');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const authRouter = require('./routers/auth.router');
 
-const { PORT } = process.env;
 
-const corsConfig = {
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  credentials: true,
-};
-app.use(cors(corsConfig));
+
+const app = express();
 
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+);
+app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/api/', apiRouter);
+app.use(express.static('public'));
 
-app.listen(PORT, () => {
-  console.log(`Server started at ${PORT} port`);
+app.get('/', (req, res) => {
+  res.send('Добро пожаловать на сервер!');
 });
+
+app.use('/api', authRouter);
+
+app.options('*', cors());
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на : ${PORT}`);
+});
+module.exports = app;

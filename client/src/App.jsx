@@ -1,16 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import LogRegister from './component/LogRegister/LogRegister';
+import Register from './component/Register/Register';
 
+
+//  import './App.css'
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      
-    </>
-  )
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<LogRegister />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+        </div>
+
+    </Router>
+  );
 }
 
-export default App
+export default App;
