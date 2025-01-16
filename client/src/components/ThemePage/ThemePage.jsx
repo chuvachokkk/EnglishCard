@@ -2,21 +2,11 @@ import axiosInstance from '../../services/axiosInstance';
 import React, { useEffect, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import foodImage from '../../image/Food.jpeg';
-import transportImage from '../../image/Cars.jpg';
-import animalsImage from '../../image/Animal.jpeg';
 
 export default function ThemePage({ user }) {
   const [themeCard, setThemeCard] = useState([]);
 
   const navigate = useNavigate();
-
-
-  const themeImages = {
-    Еда: foodImage,
-    Транспорт: transportImage,
-    Животные: animalsImage,
-  };
 
   useEffect(() => {
     axiosInstance.get('/theme/all').then((theme) => {
@@ -58,19 +48,19 @@ export default function ThemePage({ user }) {
         <Card
           key={theme.id}
           style={{
-            width: '22rem', 
-            height: '28rem', 
+            width: '22rem',
+            height: '28rem',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            transition: 'transform 0.2s', 
+            transition: 'transform 0.2s',
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.transform = 'scale(1.05)')
-          } 
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')} 
+          }
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           <Card.Img
             variant="top"
-            src={themeImages[theme.name]}
+            src={`http://localhost:3000${theme.imagePath}`} // Используем imagePath из данных темы
             style={{
               height: '200px',
               objectFit: 'cover',

@@ -14,7 +14,7 @@ import axiosInstance from '../../services/axiosInstance';
 import CreateCard from '../CreateCard/CreateCard';
 
 const Profile = ({ user, updateUser }) => {
-  const [username, setUsername] = useState(user?.username || '');
+  const [username, setUsername] = useState(user?.name || '');
   const [password, setPassword] = useState('');
   const [userQuests, setUserQuests] = useState([]);
   const [message, setMessage] = useState('');
@@ -44,7 +44,6 @@ const Profile = ({ user, updateUser }) => {
         setIsLoading(false);
       } catch (error) {
         console.error('Ошибка при загрузке данных пользователя:', error);
-        // setError('Ошибка при загрузке данных пользователя.');
         setIsLoading(false);
       }
     };
@@ -81,7 +80,7 @@ const Profile = ({ user, updateUser }) => {
   };
 
   const handleDeleteCard = async (cardId) => {
-    console.log('Deleting card with ID:', cardId); // Отладочное сообщение
+    console.log('Deleting card with ID:', cardId);
     try {
       await axiosInstance.delete(`/card/cards/${cardId}`);
       setUserQuests((prevQuests) =>
@@ -170,14 +169,12 @@ const Profile = ({ user, updateUser }) => {
                           alignItems: 'center',
                         }}
                       >
-                        {/* Текст сверху */}
                         <div
                           style={{ textAlign: 'center', marginBottom: '10px' }}
                         >
                           <strong>{quest.english}</strong> — {quest.russian}
                         </div>
 
-                        {/* Изображение */}
                         {quest.imagePath && (
                           <img
                             src={`http://localhost:3000${quest.imagePath}`}
@@ -190,7 +187,6 @@ const Profile = ({ user, updateUser }) => {
                           />
                         )}
 
-                        {/* Кнопка удаления */}
                         <Button
                           variant="danger"
                           size="lg"

@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Импортируем useNavigate
 import { Container, Row, Col, Card, ProgressBar, Alert } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
 
 const Results = ({ user }) => {
-  const { userId } = useParams();
+  const { userId } = useParams(); // Получаем userId из URL, если он есть
+  const navigate = useNavigate(); // Хук для перенаправления
   const [results, setResults] = useState([]);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!userId && user?.id) {
+      navigate(`/results/user/${user.id}`);
+    } else if (userId) {
+      fetchUserResults();
+    }
+  }, [userId, user, navigate]);
 
   const fetchUserResults = async () => {
     try {
       const response = await axiosInstance.get(`/result/user/${userId}`);
+      console.log('Results from server:', response.data); // Логируем данные
       setResults(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке результатов:', error);
       setError('Ошибка при загрузке результатов.');
     }
   };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUserResults();
-    }
-  }, [userId]);
 
   return (
     <Container className="my-5">
@@ -38,8 +42,7 @@ const Results = ({ user }) => {
             <Card key={result.themeId} className="mb-4 p-3">
               <Card.Title>{result.themeName}</Card.Title>
               <Card.Text>
-                Правильных ответов: {correctAnswers} из Бесконечности ! Ведь
-                английский можно изучать вечно , прям как Русский язык .
+                Правильных ответов: {correctAnswers} из {totalCards}
               </Card.Text>
               <ProgressBar now={progress} label={`${Math.round(progress)}%`} />
             </Card>

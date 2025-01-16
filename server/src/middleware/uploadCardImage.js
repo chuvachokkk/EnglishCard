@@ -28,7 +28,21 @@ const fileFilter = (req, file, cb) => {
 const uploadCardImage = multer({
   storage: cardStorage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Ограничение на размер файла (5 МБ)
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-module.exports = uploadCardImage;
+const getImagePath = (basePath, fileName) => {
+  const formats = ['.jpg', '.png', '.webp'];
+  for (const format of formats) {
+    const filePath = path.join(basePath, fileName + format);
+    if (fs.existsSync(filePath)) {
+      return `/uploads/${fileName}${format}`;
+    }
+  }
+  return null;
+};
+
+module.exports = {
+  uploadCardImage,
+  getImagePath,
+};

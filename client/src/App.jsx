@@ -12,10 +12,15 @@ import { useEffect, useState } from 'react';
 import axiosInstance, { setAccessToken } from './services/axiosInstance';
 
 function App() {
-  const [user, setUser] = useState(null);
-
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser && savedUser !== 'undefined'
+      ? JSON.parse(savedUser)
+      : null;
+  });
   const updateUser = (newUser) => {
     setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   useEffect(() => {
@@ -23,7 +28,7 @@ function App() {
       try {
         const res = await axiosInstance.get('/token/refresh');
         if (res.data) {
-          setUser(res.data.user);
+          updateUser(res.data.user);
           setAccessToken(res.data.accessToken);
         }
       } catch (error) {
@@ -34,7 +39,7 @@ function App() {
 
   return (
     <>
-      <NavBar user={user} />
+      <NavBar user={user} setUser={setUser} />
       <Routes>
         <Route
           path="/profile"
@@ -42,6 +47,7 @@ function App() {
         />
         <Route path="/progress" element={<Progress user={user} />} />
         <Route path="/results/user/:userId" element={<Results user={user} />} />
+        <Route path="/results" element={<Results user={user} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<LogRegister setUser={setUser} />} />
         <Route path="/theme" element={<ThemePage user={user} />} />

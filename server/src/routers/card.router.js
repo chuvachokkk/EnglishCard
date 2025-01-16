@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { where } = require('sequelize');
 const { Card, Result, Theme } = require('../../db/models');
-const uploadCardImage = require('../middleware/uploadCardImage');
+const { uploadCardImage } = require('../middleware/uploadCardImage');
 
 // Получаем карточки, созданные пользователем
 router.get('/user/:userId', async (req, res) => {
