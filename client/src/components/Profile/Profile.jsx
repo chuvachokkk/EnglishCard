@@ -13,15 +13,16 @@ import axiosInstance from '../../services/axiosInstance';
 const Profile = ({ user }) => {
   const [cards, setCards] = useState([]);
   const [english, setEnglish] = useState('');
-  const [russian, setRussian] = useState(''); 
+  const [russian, setRussian] = useState('');
   const [themeId, setThemeId] = useState('');
   const [themes, setThemes] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  // Загрузка карточек пользователя
   const fetchUserCards = async () => {
     try {
-      const response = await axiosInstance.get(`/cards/user/${user.id}`);
+      const response = await axiosInstance.get(`/card/user/${user.id}`);
       setCards(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке карточек:', error);
@@ -29,9 +30,10 @@ const Profile = ({ user }) => {
     }
   };
 
+
   const fetchThemes = async () => {
     try {
-      const response = await axiosInstance.get('/themes');
+      const response = await axiosInstance.get('/theme'); 
       setThemes(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке тем:', error);
@@ -42,7 +44,7 @@ const Profile = ({ user }) => {
   const handleCreateCard = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/cards', {
+      const response = await axiosInstance.post('/card/cards', {
         english,
         russian,
         themeId,
@@ -63,7 +65,7 @@ const Profile = ({ user }) => {
 
   const handleDeleteCard = async (cardId) => {
     try {
-      await axiosInstance.delete(`/cards/${cardId}`);
+      await axiosInstance.delete(`/card/cards/${cardId}`);
       setCards(cards.filter((card) => card.id !== cardId));
       setMessage('Карточка успешно удалена!');
       setError('');
@@ -87,6 +89,7 @@ const Profile = ({ user }) => {
       {user ? (
         <Row>
           <Col md={8}>
+            {/* Форма для создания новой карточки */}
             <Card className="p-4">
               <h3 className="mb-4">Создать новую карточку</h3>
               {message && <Alert variant="success">{message}</Alert>}
@@ -134,6 +137,7 @@ const Profile = ({ user }) => {
               </Form>
             </Card>
 
+            {/* Список созданных карточек */}
             <Card className="mt-4 p-4">
               <h3 className="mb-4">Мои карточки</h3>
               {cards.length > 0 ? (

@@ -3,8 +3,8 @@ import { Container, Row, Col, Card, ProgressBar, Alert } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
 
 const Progress = ({ user }) => {
-  const [results, setResults] = useState([]);
-  const [error, setError] = useState('');
+  const [results, setResults] = useState([]); 
+  const [error, setError] = useState(''); 
 
   const fetchUserProgress = async () => {
     try {

@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { User } = require('../../db/models'); //! проверить пути
+const { User } = require('../../db/models');
 const bcrypt = require('bcrypt');
-const generateToken = require('../../utils/generateToken');
+const generateToken = require('../utils/generateToken');
 const cookieConfig = require('../../configs/cookieConfig');
 
 router.post('/signup', async (req, res) => {
@@ -9,18 +9,12 @@ router.post('/signup', async (req, res) => {
 
   try {
     const [user, isCreated] = await User.findOrCreate({
-      where: {
-        email,
-      },
-      defaults: {
-        username,
-        email,
-        password: await bcrypt.hash(password, 10),
-      },
+      where: { email },
+      defaults: { username, email, password: await bcrypt.hash(password, 10) },
     });
 
     if (!isCreated) {
-      res.status(400).json({ message: 'User alredy exist' });
+      res.status(400).json({ message: 'User already exists' });
     } else {
       const plainUser = user.get();
       delete plainUser.password;
@@ -40,17 +34,23 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
   const { email, password } = req.body;
 
-  if (!(email && password)) {
-    res.status(400).json({ message: 'All fields are required' });
-  }
+  try {
+    if (!(email && password)) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
-  const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } });
 
-  const isCorrectPassword = await bcrypt.compare(password, user.password);
+    if (!user) {
+      return res.status(401).json({ message: 'Incorrect email or password' });
+    }
 
-  if (!isCorrectPassword) {
-    res.status(401).json({ message: 'Incorrect email or password' });
-  } else {
+    const isCorrectPassword = await bcrypt.compare(password, user.password);
+
+    if (!isCorrectPassword) {
+      return res.status(401).json({ message: 'Incorrect email or password' });
+    }
+
     const plainUser = user.get();
     delete plainUser.password;
 
@@ -59,9 +59,6 @@ router.post('/signin', async (req, res) => {
     res
       .cookie('refreshToken', refreshToken, cookieConfig.refresh)
       .json({ user: plainUser, accessToken });
-  }
-
-  try {
   } catch (error) {
     console.error(error);
     res.sendStatus(400);

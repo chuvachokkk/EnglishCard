@@ -1,7 +1,7 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Cards', {
       id: {
         allowNull: false,
@@ -11,12 +11,15 @@ module.exports = {
       },
       english: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       russian: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       learned: {
         type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -27,8 +30,18 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      themeId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Themes',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
       imagePath: {
         type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -40,7 +53,8 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface, Sequelize) {
+
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Cards');
   },
 };
