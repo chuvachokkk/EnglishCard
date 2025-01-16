@@ -25,11 +25,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Настройка Multer
 const uploadCardImage = multer({
   storage: cardStorage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 5 * 1024 * 1024 }, // Ограничение на размер файла (5 МБ)
 });
 
 module.exports = uploadCardImage;

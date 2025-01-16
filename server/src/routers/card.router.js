@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const { where } = require('sequelize');
-const { Card, Result } = require('../../db/models');
+const { Card, Result, Theme } = require('../../db/models');
 const uploadCardImage = require('../middleware/uploadCardImage');
 
 // Получаем карточки, созданные пользователем
-router.get('/card/user/:userId', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
   const { userId } = req.params;
   try {
     const cards = await Card.findAll({ where: { userId } });
@@ -20,10 +20,22 @@ router.post('/cards', uploadCardImage.single('image'), async (req, res) => {
   const { english, russian, themeId, userId } = req.body;
   const imagePath = req.file ? `/uploads/cards/${req.file.filename}` : null;
 
-  console.log('Received data:', { english, russian, themeId, userId, imagePath });
+  console.log('Received data:', {
+    english,
+    russian,
+    themeId,
+    userId,
+    imagePath,
+  });
 
   try {
-    const card = await Card.create({ english, russian, themeId, userId, imagePath });
+    const card = await Card.create({
+      english,
+      russian,
+      themeId,
+      userId,
+      imagePath,
+    });
     res.json(card);
   } catch (error) {
     console.error('Error creating card:', error);
@@ -34,8 +46,10 @@ router.post('/cards', uploadCardImage.single('image'), async (req, res) => {
 // Удаление карточки
 router.delete('/cards/:id', async (req, res) => {
   const { id } = req.params;
+  console.log('Deleting card with ID:', id); // Отладочное сообщение
   try {
     await Card.destroy({ where: { id } });
+    console.log('Card deleted successfully'); // Отладочное сообщение
     res.json({ message: 'Карточка успешно удалена' });
   } catch (error) {
     console.log(error);
@@ -110,6 +124,42 @@ router.post('/card/check-answer', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Ошибка при проверке ответа' });
+  }
+});
+
+router.post('/result', async (req, res) => {
+  const { userId, cardId, isCorrect } = req.body;
+
+  try {
+    const card = await Card.findByPk(cardId);
+
+    if (!card) {
+      return res.status(404).json({ error: 'Карточка не найдена' });
+    }
+
+    const result = await Result.findOne({
+      where: { userId, themeId: card.themeId },
+    });
+
+    if (result) {
+      if (isCorrect) {
+        result.result += 1;
+      }
+      result.totalCards += 1;
+      await result.save();
+    } else {
+      await Result.create({
+        userId,
+        themeId: card.themeId,
+        result: isCorrect ? 1 : 0,
+        totalCards: 1,
+      });
+    }
+
+    res.json({ message: 'Результат успешно сохранен' });
+  } catch (error) {
+    console.error('Ошибка при сохранении результата:', error);
+    res.status(500).json({ error: 'Ошибка при сохранении результата' });
   }
 });
 

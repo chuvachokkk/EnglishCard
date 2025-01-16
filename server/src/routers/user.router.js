@@ -1,41 +1,48 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const { User } = require('../../db/models');
 const { verifyAccessToken } = require('../middleware/verifyToken');
-const uploadAvatar = require('../middleware/uploadAvatar');
+// const uploadAvatar = require('../middleware/uploadAvatar');
 
 router.get('/profile', verifyAccessToken, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id);
+    if (!res.locals.user) {
+      return res.status(401).json({ message: 'Неавторизованный доступ' });
+    }
+    const userId = res.locals.user.id;
+    const user = await User.findByPk(userId);
+    console.log('res.locals.user:', res.locals.user);
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' });
     }
-    res.status(200).json({ id: user.id, name: user.name });
+
+    res.status(200).json({ id: user.id, name: user.name});
   } catch (error) {
-    console.error(error);
+    console.error('Ошибка на /profile:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
-router.post('/upload-image', verifyAccessToken, uploadAvatar.single('file'), async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const imagePath = req.file ? `/uploads/avatar/${req.file.filename}` : null;
+// router.post('/upload-image', uploadAvatar.single('file'), async (req, res) => {
+//   try {
+//     const userId = res.locals.user.id;
+//     const imagePath = req.file ? `/uploads/avatar/${req.file.filename}` : null;
 
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
-    }
+//     const user = await User.findByPk(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'Пользователь не найден' });
+//     }
 
-    user.avatar = imagePath;
-    await user.save();
+//     user.avatar = imagePath;
+//     await user.save();
 
-    res.json({ imageUrl: imagePath });
-  } catch (error) {
-    console.error('Ошибка при загрузке изображения:', error);
-    res.status(500).json({ message: 'Ошибка при загрузке изображения' });
-  }
-});
+//     res.json({ imageUrl: imagePath });
+//   } catch (error) {
+//     console.error('Ошибка при загрузке изображения:', error);
+//     res.status(500).json({ message: 'Ошибка при загрузке изображения' });
+//   }
+// });
 
 router.put('/update', verifyAccessToken, async (req, res) => {
   const { newUsername, newPassword } = req.body;

@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
     delete plainUser.password;
 
     const { accessToken, refreshToken } = generateToken({ user: plainUser });
-
+    res.locals.user = plainUser;
     res
       .cookie('refreshToken', refreshToken, cookieConfig.refresh)
       .json({ user: plainUser, accessToken });

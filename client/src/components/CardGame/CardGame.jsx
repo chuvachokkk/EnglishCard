@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
-import { Card, Form, Button, Alert, Container } from 'react-bootstrap';
+import { Card, Form, Button, Alert, Container, Image } from 'react-bootstrap';
 
-const CardGame = () => {
+const CardGame = ({ user }) => {
   const { themeId } = useParams();
   const navigate = useNavigate();
   const [cards, setCards] = useState([]);
@@ -28,12 +28,14 @@ const CardGame = () => {
 
   const handleCheckAnswer = async () => {
     const currentCard = cards[currentCardIndex];
-    const isAnswerCorrect = currentCard.russian.toLowerCase() === userAnswer.toLowerCase();
+    const isAnswerCorrect =
+      currentCard.russian.toLowerCase() === userAnswer.toLowerCase();
     setIsCorrect(isAnswerCorrect);
 
     try {
-      await axiosInstance.post('/result', {
-        userId,
+      // Отправляем результат на сервер
+      await axiosInstance.post('/card/result', {
+        userId: user.id,
         cardId: currentCard.id,
         isCorrect: isAnswerCorrect,
       });
@@ -52,37 +54,77 @@ const CardGame = () => {
     }, 1000);
   };
 
+  const handleExit = () => {
+    navigate('/theme');
+  };
+
   if (error) {
-    return <div>{error}</div>;
+    return <Alert variant="danger">{error}</Alert>;
   }
 
   if (cards.length === 0) {
-    return <div>Загрузка карточек...</div>;
+    return <Alert variant="info">Загрузка карточек...</Alert>;
   }
 
   const currentCard = cards[currentCardIndex];
 
   if (!currentCard) {
-    return <div>Карточки не найдены.</div>;
+    return <Alert variant="warning">Карточки не найдены.</Alert>;
   }
 
   return (
-    <div>
-      <h1>Карточка {currentCardIndex + 1} из {cards.length}</h1>
-      <div>
-        <p>Слово на английском: {currentCard.english}</p>
-        <input
-          type="text"
-          value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
-          placeholder="Напиши на русском"
-        />
-        <button onClick={handleCheckAnswer}>Проверить</button>
-      </div>
-      {isCorrect !== null && (
-        <p>{isCorrect ? 'Правильно!' : 'Неверно :('}</p>
-      )}
-    </div>
+    <Container className="mt-1">
+      <Card className="shadow">
+        <Card.Body>
+          <Card.Title className="text-center">
+            Карточка {currentCardIndex + 1} из {cards.length}
+          </Card.Title>
+          <div className="d-flex justify-content-center mb-3">
+            <Image
+              src={
+                currentCard.imagePath
+                  ? `http://localhost:3000${currentCard.imagePath}`
+                  : 'https://blog.mann-ivanov-ferber.ru/wp-content/uploads/2017/11/untit.jpg'
+              }
+              fluid
+              style={{ maxHeight: '1000px', objectFit: 'cover' }}
+            />
+          </div>
+
+          <Card.Text className="text-center fs-4">
+            Слово на английском: <strong>{currentCard.english}</strong>
+          </Card.Text>
+
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="text"
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+              placeholder="Напиши на русском"
+              className="text-center"
+            />
+          </Form.Group>
+
+          <div className="d-grid gap-2">
+            <Button variant="primary" onClick={handleCheckAnswer} size="lg">
+              Проверить
+            </Button>
+            <Button variant="secondary" onClick={handleExit} size="lg">
+              Выход
+            </Button>
+          </div>
+
+          {isCorrect !== null && (
+            <Alert
+              variant={isCorrect ? 'success' : 'danger'}
+              className="mt-3 text-center"
+            >
+              {isCorrect ? 'Правильно! 🎉' : 'Неверно 😢'}
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

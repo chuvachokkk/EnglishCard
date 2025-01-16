@@ -23,6 +23,10 @@ const CreateCard = ({ userId }) => {
 
   const handleCreateCard = async (e) => {
     e.preventDefault();
+    if (!userId) {
+      setError('Пользователь не авторизован');
+      return;
+    }
     const formData = new FormData();
     formData.append('english', english);
     formData.append('russian', russian);

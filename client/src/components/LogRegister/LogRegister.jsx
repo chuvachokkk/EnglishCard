@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
-import axiosInstance from '../../services/axiosInstance';
+import axiosInstance, { setAccessToken } from '../../services/axiosInstance';
 import '../LogRegister/LogRegister.css';
 
-function LogRegister() {
+function LogRegister({ setUser }) {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,10 +19,10 @@ function LogRegister() {
       });
 
       if (response.status === 200) {
+        localStorage.setItem('accessToken', response.data.accessToken); // Сохраняем токен
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify(response.data.user));
-
-        // Перенаправляем на страницу с темами
+        setUser(response.data.user);
         navigate('/theme');
       }
     } catch (err) {

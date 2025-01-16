@@ -6,6 +6,8 @@ import Progress from './components/Progress/Progress';
 import Register from './components/Register/Register';
 import LogRegister from './components/LogRegister/LogRegister';
 import CardGame from './components/CardGame/CardGame';
+import NavBar from './components/NavBar/NavBar';
+import Results from './components/Results/Results';
 import { useEffect, useState } from 'react';
 import axiosInstance, { setAccessToken } from './services/axiosInstance';
 
@@ -18,26 +20,34 @@ function App() {
 
   useEffect(() => {
     (async function () {
-      const res = await axiosInstance.get('/token/refresh');
-      if (res.data) {
-        setUser(res.data.user);
-        setAccessToken(res.data.accessToken);
+      try {
+        const res = await axiosInstance.get('/token/refresh');
+        if (res.data) {
+          setUser(res.data.user);
+          setAccessToken(res.data.accessToken);
+        }
+      } catch (error) {
+        console.error('Ошибка при обновлении токена:', error);
       }
     })();
   }, []);
 
   return (
-    <Routes>
-      <Route
-        path="/profile"
-        element={<Profile user={user} updateUser={updateUser} />}
-      />
-      <Route path="/progress" element={<Progress user={user} />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/" element={<LogRegister />} />
-      <Route path="/theme" element={<ThemePage />} />
-      <Route path="/card/:themeId" element={<CardGame />} />
-    </Routes>
+    <>
+      <NavBar user={user} />
+      <Routes>
+        <Route
+          path="/profile"
+          element={<Profile user={user} updateUser={updateUser} />}
+        />
+        <Route path="/progress" element={<Progress user={user} />} />
+        <Route path="/results/user/:userId" element={<Results user={user} />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<LogRegister setUser={setUser} />} />
+        <Route path="/theme" element={<ThemePage user={user} />} />
+        <Route path="/card/:themeId" element={<CardGame user={user} />} />
+      </Routes>
+    </>
   );
 }
 
