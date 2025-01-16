@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/api/', apiRouter);
+app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started at ${PORT} port`);
