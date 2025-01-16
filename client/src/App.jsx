@@ -2,11 +2,11 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Route } from 'react-router-dom'
+import { Route, Router } from 'react-router-dom'
 import { Routes } from 'react-router-dom'
 import ThemePage from './components/ThemePage/ThemePage'
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Profile from './components/Profile/Profile';
 import Progress from './components/Progress/Progress';
 import Register from './components/Register/Register';
@@ -17,15 +17,16 @@ function App() {
   const user = { id: 1, login: 'Ivan' };
 
   return (
-    <Router>
+    // <Router>
       <Routes>
         <Route path="/profile" element={<Profile user={user} />} />
         <Route path="/progress" element={<Progress user={user} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<LogRegister />} />
+        <Route path="/theme" element={<ThemePage/>}/>
         <Route path='/card/:themeId' element={<CardGame />} />
       </Routes>
-    </Router>
+    // </Router>
   );
 }
 

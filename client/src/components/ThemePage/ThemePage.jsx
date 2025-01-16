@@ -22,7 +22,7 @@ const navigate = useNavigate();
           <Card.Img style={{ width: "auto" }} variant="top" src={theme.imagePath} />
           <Card.Body>
             <Card.Title>{theme.name}</Card.Title>
-            <Button variant="primary" onClick={() => navigate(`/card.id`)}>
+            <Button variant="primary" onClick={() => navigate(`/card/${theme.id}`)}>
               Выбрать
             </Button>
           </Card.Body>
