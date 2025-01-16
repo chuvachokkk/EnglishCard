@@ -6,7 +6,7 @@ module.exports = {
       'Themes',
       [
         {
-          name: 'Еда',
+          name: 'Фрукты',
           imagePath: '/images/food.jpg',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -19,6 +19,24 @@ module.exports = {
         },
         {
           name: 'Животные',
+          imagePath: '/images/animals.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'Профессии',
+          imagePath: '/images/animals.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'Спорт',
+          imagePath: '/images/animals.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'Цвета',
           imagePath: '/images/animals.jpg',
           createdAt: new Date(),
           updatedAt: new Date(),
