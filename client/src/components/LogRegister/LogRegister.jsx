@@ -1,40 +1,42 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Form, Button, Alert } from 'react-bootstrap';
-import axiosInstance from '../../services/axiosInstance';
-import '../LogRegister/LogRegister.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Form, Button, Alert } from "react-bootstrap";
+import axiosInstance, { setAccessToken } from "../../services/axiosInstance";
+import "../LogRegister/LogRegister.css";
 
-function LogRegister() {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+function LogRegister({ user, setUser }) {
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/auth/login', {
+      const response = await axiosInstance.post("/auth/login", {
         name: login,
         password,
       });
 
       if (response.status === 200) {
-        localStorage.setItem('isAuthenticated', 'true');
-        navigate('/profile');
+        setUser(response.data.user);
+        setAccessToken(response.data.accessToken);
+        setUser(response.data.user)
+        navigate("/profile");
       }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || 'Неверный логин или пароль');
+      setError(err.response?.data?.message || "Неверный логин или пароль");
     }
   };
 
   const handleRegister = () => {
-    navigate('/register');
+    navigate("/register");
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
-      <Form className="p-4 border rounded shadow" style={{ width: '300px' }}>
+      <Form className="p-4 border rounded shadow" style={{ width: "300px" }}>
         <h2 className="mb-4 text-center">Вход / Регистрация</h2>
         {error && <Alert variant="danger">{error}</Alert>}
         <Form.Group className="mb-3">

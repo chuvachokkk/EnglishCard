@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-export default function ThemePage() {
+export default function ThemePage({user}) {
   const [themeCard, setThemeCard] = useState([]); // setThemeCard меняет themeCard
 
-const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     axiosInstance.get("/theme/all").then((theme) => {
       setThemeCard(theme.data);
@@ -15,14 +15,47 @@ const navigate = useNavigate();
     });
   }, []);
 
+  if (!user) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          padding: "20px",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "90vh",
+        }}
+      >
+        Авторизуйтесь
+      </div>
+    );
+  }
+
   return (
-    <div style={{display: "flex", gap: "20px"}}>
+    <div
+      style={{
+        display: "flex",
+        gap: "20px",
+        padding: "20px",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "90vh",
+      }}
+    >
       {themeCard.map((theme) => (
-        <Card key={theme.id} style={{ width: "18rem", }}>
-          <Card.Img style={{ width: "auto" }} variant="top" src={theme.imagePath} />
+        <Card key={theme.id} style={{ width: "18rem" }}>
+          <Card.Img
+            style={{ width: "auto" }}
+            variant="top"
+            src={theme.imagePath}
+          />
           <Card.Body>
             <Card.Title>{theme.name}</Card.Title>
-            <Button variant="primary" onClick={() => navigate(`/card/${theme.id}`)}>
+            <Button
+              variant="primary"
+              onClick={() => navigate(`/card/${theme.id}`)}
+            >
               Выбрать
             </Button>
           </Card.Body>

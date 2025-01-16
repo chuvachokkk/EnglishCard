@@ -29,12 +29,12 @@ const Profile = ({ user }) => {
   const [newLogin, setNewLogin] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [avatar, setAvatar] = useState(user.avatar || '');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
 
   // Загрузка карточек пользователя
   const fetchUserCards = async () => {
     try {
-      const response = await axiosInstance.get(`/card/user/${user.id}`);
+      const response = await axiosInstance.get(`/card/user/${user?.id}`);
       setCards(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке карточек:', error);
@@ -61,7 +61,7 @@ const Profile = ({ user }) => {
         english,
         russian,
         themeId,
-        userId: user.id,
+        userId: user?.id,
       });
       setCards([...cards, response.data]);
       setMessage('Карточка успешно создана!');
@@ -94,7 +94,7 @@ const Profile = ({ user }) => {
   const handleUpdateLogin = async () => {
     try {
       const response = await axiosInstance.put('/auth/update-login', {
-        userId: user.id,
+        userId: user?.id,
         newLogin,
       });
       setMessage(response.data.message);
@@ -111,7 +111,7 @@ const Profile = ({ user }) => {
   const handleUpdatePassword = async () => {
     try {
       const response = await axiosInstance.put('/auth/update-password', {
-        userId: user.id,
+        userId: user?.id,
         currentPassword,
         newPassword,
       });
@@ -131,7 +131,7 @@ const Profile = ({ user }) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('avatar', file);
-    formData.append('userId', user.id);
+    formData.append('userId', user?.id);
 
     try {
       const response = await axiosInstance.post(
@@ -143,7 +143,7 @@ const Profile = ({ user }) => {
           },
         }
       );
-      setAvatar(response.data.user.avatar);
+      setAvatar(response.data.user?.avatar);
       setMessage('Аватарка успешно загружена!');
       setError('');
     } catch (error) {
