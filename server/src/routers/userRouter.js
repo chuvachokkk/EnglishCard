@@ -1,9 +1,9 @@
 const express = require('express');
-const userRouter = express.Router();
+const router = express.Router();
 const { User } = require('../../db/models');
 const { verifyAccessToken } = require('../middleware/verifyToken');
 
-userRouter.get('/profile', verifyAccessToken, async (req, res) => {
+router.get('/profile', verifyAccessToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
     if (!user) {
@@ -15,4 +15,44 @@ userRouter.get('/profile', verifyAccessToken, async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
-module.exports = userRouter;
+
+router.put('/update', verifyAccessToken, async (req, res) => {
+  console.log('Запрос на обновление профиля:', req.body);
+
+  const { userId, newUsername, currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    if (newPassword) {
+      const isPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Текущий пароль неверный' });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+    }
+
+    if (newUsername) {
+      user.name = newUsername;
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: 'Профиль успешно обновлен' });
+  } catch (error) {
+    console.error('Ошибка при обновлении профиля:', error);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+module.exports = router;
