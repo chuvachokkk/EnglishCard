@@ -1,3 +1,12 @@
+// App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import LogRegister from './component/LogRegister/LogRegister';
+import Register from './component/Register/Register';
+
+
+//  import './App.css'
+function App() {
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Profile from './components/Profile/Profile';

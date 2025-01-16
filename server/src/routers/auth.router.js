@@ -4,9 +4,9 @@ const bcrypt = require('bcrypt');
 const generateToken = require('../utils/generateToken');
 const cookieConfig = require('../../configs/cookieConfig');
 
-router.post('/signup', async (req, res) => {
-  const { username, email, password } = req.body;
-
+const JWT = process.env.JWT_SECRET;
+authRouter.post('/login', async (req, res) => {
+  const { login, password } = req.body;
   try {
     const [user, isCreated] = await User.findOrCreate({
       where: { email },
@@ -61,17 +61,28 @@ router.post('/signin', async (req, res) => {
       .json({ user: plainUser, accessToken });
   } catch (error) {
     console.error(error);
-    res.sendStatus(400);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
-router.get('/logout', (req, res) => {
+
+// Регистрация
+authRouter.post('/register', async (req, res) => {
+  const { login, password } = req.body;
   try {
-    res.clearCookie('refreshToken').sendStatus(200);
+    const existingUser = await User.findOne({ where: { name: login } });
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Пользователь уже существует' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.create({ name: login, password: hashedPassword });
+    res.status(201).json({ message: 'Пользователь создан' });
   } catch (error) {
     console.error(error);
-    res.sendStatus(400);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
-module.exports = router;
+module.exports = authRouter;
