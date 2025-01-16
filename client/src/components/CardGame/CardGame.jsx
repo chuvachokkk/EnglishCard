@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axiosInstance from '../../services/axiosInstance';
-import { Card, Form, Button, Alert, Container } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../services/axiosInstance";
+import { Card, Form, Button, Alert, Container } from "react-bootstrap";
 
 const CardGame = () => {
   const { themeId } = useParams();
   const navigate = useNavigate();
   const [cards, setCards] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [userAnswer, setUserAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -18,8 +18,8 @@ const CardGame = () => {
         const response = await axiosInstance.get(`/card/${themeId}`);
         setCards(response.data);
       } catch (error) {
-        console.error('Ошибка при загрузке карточек:', error);
-        setError('Ошибка при загрузке карточек');
+        console.error("Ошибка при загрузке карточек:", error);
+        setError("Ошибка при загрузке карточек");
       }
     };
 
@@ -28,26 +28,17 @@ const CardGame = () => {
 
   const handleCheckAnswer = async () => {
     const currentCard = cards[currentCardIndex];
-    const isAnswerCorrect = currentCard.russian.toLowerCase() === userAnswer.toLowerCase();
+    const isAnswerCorrect =
+      currentCard.russian.toLowerCase() === userAnswer.toLowerCase();
     setIsCorrect(isAnswerCorrect);
-
-    try {
-      await axiosInstance.post('/result', {
-        userId,
-        cardId: currentCard.id,
-        isCorrect: isAnswerCorrect,
-      });
-    } catch (error) {
-      console.error('Ошибка при сохранении результата:', error);
-    }
 
     setTimeout(() => {
       if (currentCardIndex + 1 < cards.length) {
         setCurrentCardIndex((prevIndex) => prevIndex + 1);
-        setUserAnswer('');
+        setUserAnswer("");
         setIsCorrect(null);
       } else {
-        navigate('/theme');
+        navigate("/theme");
       }
     }, 1000);
   };
@@ -68,7 +59,9 @@ const CardGame = () => {
 
   return (
     <div>
-      <h1>Карточка {currentCardIndex + 1} из {cards.length}</h1>
+      <h1>
+        Карточка {currentCardIndex + 1} из {cards.length}
+      </h1>
       <div>
         <p>Слово на английском: {currentCard.english}</p>
         <input
@@ -79,11 +72,8 @@ const CardGame = () => {
         />
         <button onClick={handleCheckAnswer}>Проверить</button>
       </div>
-      {isCorrect !== null && (
-        <p>{isCorrect ? 'Правильно!' : 'Неверно :('}</p>
-      )}
+      {isCorrect !== null && <p>{isCorrect ? "Правильно!" : "Неверно :("}</p>}
     </div>
   );
 };
-
 export default CardGame;
