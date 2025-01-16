@@ -60,4 +60,52 @@ router.get('/results/user/:userId', async (req, res) => {
   }
 });
 
+router.get('/:themeId', async (req, res) => {
+  const { themeId } = req.params;
+
+  try {
+    const cards = await Card.findAll({ where: { themeId } });
+    res.json(cards);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Ошибка при загрузке карточек' });
+  }
+});
+
+router.post("/card/check-answer", async (req, res) => {
+  const { cardId, userAnswer, userId } = req.body;
+
+  try {
+    const card = await Card.findByPk(cardId);
+
+    if (!card) {
+      return res.status(404).json({ error: "Карточка не найдена" });
+    }
+
+    const isCorrect = card.russian.toLowerCase() === userAnswer.toLowerCase();
+    const result = await Result.findOne({
+      where: { userId, themeId: card.themeId },
+    });
+
+    if (result) {
+      if (isCorrect) {
+        result.result += 1;
+      }
+      await result.save();
+    } else {
+      await Result.create({
+        userId,
+        themeId: card.themeId,
+        result: isCorrect ? 1 : 0,
+        totalCards: 1,
+      });
+    }
+
+    res.json({ isCorrect, nextCard: await getNextCard(userId, card.themeId) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Ошибка при проверке ответа" });
+  }
+});
+
 module.exports = router;

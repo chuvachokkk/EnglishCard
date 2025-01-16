@@ -15,6 +15,7 @@ function LogRegister() {
     try {
       const response = await axiosInstance.post('/auth/login', {
         name: login,
+        name: login,
         password,
       });
 
