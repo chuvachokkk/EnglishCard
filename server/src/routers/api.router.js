@@ -6,7 +6,7 @@ const authRouter = require('./auth.router');
 const tokenRouter = require('./token.router');
 const cardRouter = require('./card.router');
 const themeRouter = require('./theme.router');
-const userRouter = require('./userRouter');
+const userRouter = require('./user.router');
 
 router.use('/auth', authRouter);
 router.use('/token', tokenRouter);

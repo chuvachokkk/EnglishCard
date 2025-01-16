@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { User } = require('../../db/models');
 const { verifyAccessToken } = require('../middleware/verifyToken');
+const uploadAvatar = require('../middleware/uploadAvatar');
 
 router.get('/profile', verifyAccessToken, async (req, res) => {
   try {
@@ -16,9 +17,28 @@ router.get('/profile', verifyAccessToken, async (req, res) => {
   }
 });
 
-router.put('/update', verifyAccessToken, async (req, res) => {
+router.post('/upload-image', verifyAccessToken, uploadAvatar.single('file'), async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const imagePath = req.file ? `/uploads/avatar/${req.file.filename}` : null;
 
-  const { newUsername, newPassword} = req.body;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    user.avatar = imagePath;
+    await user.save();
+
+    res.json({ imageUrl: imagePath });
+  } catch (error) {
+    console.error('Ошибка при загрузке изображения:', error);
+    res.status(500).json({ message: 'Ошибка при загрузке изображения' });
+  }
+});
+
+router.put('/update', verifyAccessToken, async (req, res) => {
+  const { newUsername, newPassword } = req.body;
   const userId = res.locals.user.id;
 
   try {

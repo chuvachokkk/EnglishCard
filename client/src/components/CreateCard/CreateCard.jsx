@@ -6,6 +6,7 @@ const CreateCard = ({ userId }) => {
   const [english, setEnglish] = useState('');
   const [russian, setRussian] = useState('');
   const [themeId, setThemeId] = useState('');
+  const [image, setImage] = useState(null);
   const [themes, setThemes] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -22,18 +23,27 @@ const CreateCard = ({ userId }) => {
 
   const handleCreateCard = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('english', english);
+    formData.append('russian', russian);
+    formData.append('themeId', themeId);
+    formData.append('userId', userId);
+    if (image) {
+      formData.append('image', image);
+    }
+
     try {
-      const response = await axiosInstance.post('/card/cards', {
-        english,
-        russian,
-        themeId,
-        userId,
+      const response = await axiosInstance.post('/card/cards', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       setMessage('Карточка успешно создана!');
       setError('');
       setEnglish('');
       setRussian('');
       setThemeId('');
+      setImage(null);
     } catch (error) {
       console.error('Ошибка при создании карточки:', error);
       setError('Ошибка при создании карточки.');
@@ -84,6 +94,14 @@ const CreateCard = ({ userId }) => {
             </option>
           ))}
         </Form.Select>
+      </Form.Group>
+
+      <Form.Group controlId="formImage" className="mb-3">
+        <Form.Label>Изображение (опционально)</Form.Label>
+        <Form.Control
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
       </Form.Group>
 
       <Button variant="primary" type="submit" className="w-100">

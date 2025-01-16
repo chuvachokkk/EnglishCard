@@ -17,7 +17,7 @@ function Register() {
       return;
     }
 
-    if (password.length < 9) {
+    if (password.length < 2) {
       setError('Пароль должен содержать не менее 9 символов');
       return;
     }

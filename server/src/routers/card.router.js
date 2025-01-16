@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { where } = require('sequelize');
 const { Card, Result } = require('../../db/models');
+const uploadCardImage = require('../middleware/uploadCardImage');
 
 // Получаем карточки, созданные пользователем
 router.get('/card/user/:userId', async (req, res) => {
@@ -15,13 +16,17 @@ router.get('/card/user/:userId', async (req, res) => {
 });
 
 // Создание новой карточки
-router.post('/cards', async (req, res) => {
+router.post('/cards', uploadCardImage.single('image'), async (req, res) => {
   const { english, russian, themeId, userId } = req.body;
+  const imagePath = req.file ? `/uploads/cards/${req.file.filename}` : null;
+
+  console.log('Received data:', { english, russian, themeId, userId, imagePath });
+
   try {
-    const card = await Card.create({ english, russian, themeId, userId });
+    const card = await Card.create({ english, russian, themeId, userId, imagePath });
     res.json(card);
   } catch (error) {
-    console.log(error);
+    console.error('Error creating card:', error);
     res.status(500).json({ error: 'Ошибка при создании карточки' });
   }
 });
@@ -72,14 +77,14 @@ router.get('/:themeId', async (req, res) => {
   }
 });
 
-router.post("/card/check-answer", async (req, res) => {
+router.post('/card/check-answer', async (req, res) => {
   const { cardId, userAnswer, userId } = req.body;
 
   try {
     const card = await Card.findByPk(cardId);
 
     if (!card) {
-      return res.status(404).json({ error: "Карточка не найдена" });
+      return res.status(404).json({ error: 'Карточка не найдена' });
     }
 
     const isCorrect = card.russian.toLowerCase() === userAnswer.toLowerCase();
@@ -104,7 +109,7 @@ router.post("/card/check-answer", async (req, res) => {
     res.json({ isCorrect, nextCard: await getNextCard(userId, card.themeId) });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Ошибка при проверке ответа" });
+    res.status(500).json({ error: 'Ошибка при проверке ответа' });
   }
 });
 

@@ -10,7 +10,11 @@ import { useEffect, useState } from 'react';
 import axiosInstance, { setAccessToken } from './services/axiosInstance';
 
 function App() {
-const [user,setUser] = useState(null)
+  const [user, setUser] = useState(null);
+
+  const updateUser = (newUser) => {
+    setUser(newUser);
+  };
 
   useEffect(() => {
     (async function () {
@@ -24,7 +28,10 @@ const [user,setUser] = useState(null)
 
   return (
     <Routes>
-      <Route path="/profile" element={<Profile user={user} />} />
+      <Route
+        path="/profile"
+        element={<Profile user={user} updateUser={updateUser} />}
+      />
       <Route path="/progress" element={<Progress user={user} />} />
       <Route path="/register" element={<Register />} />
       <Route path="/" element={<LogRegister />} />

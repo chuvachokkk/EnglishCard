@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
+import CreateCard from '../CreateCard/CreateCard';
 
 const Profile = ({ user, updateUser }) => {
   const [username, setUsername] = useState(user?.username || '');
@@ -19,36 +20,33 @@ const Profile = ({ user, updateUser }) => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  
+  const fetchUserCards = async () => {
+    try {
+      const response = await axiosInstance.get(`/card/user/${user.id}`);
+      setUserQuests(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке карточек:', error);
+      setError('Ошибка при загрузке карточек.');
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserCards();
+    }
+  }, [user]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
     try {
-      // const accessToken = localStorage.getItem('accessToken');
-      // console.log('Access Token:', accessToken);
-      console.log('Request Data:', {
-        userId: user.id,
+      const response = await axiosInstance.put(`/user/update/`, {
         newUsername: username,
-        // currentPassword,
-        // newPassword,
       });
-
-      const response = await axiosInstance.put(
-        `/user/update/`,
-        {
-          newUsername: username,
-        },
-        // { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-
-      console.log('Response:', response.data);
 
       if (response.status === 200) {
         setMessage('Профиль успешно обновлен!');
         setError('');
-        // setCurrentPassword('');
-        // setNewPassword('');
       }
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
@@ -66,19 +64,18 @@ const Profile = ({ user, updateUser }) => {
       formData.append('file', file);
 
       try {
-        const accessToken = localStorage.getItem('accessToken');
         const response = await axiosInstance.post(
-          '/profile/upload-image',
+          '/user/upload-image',
           formData,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           }
         );
 
-        const updatedUser = { ...user, avatar: response.data.imageUrl };
+        const updatedUser = { ...user, avatar: response.data.imageURL };
         updateUser(updatedUser);
 
         setProfileImage(response.data.imageUrl);
@@ -159,10 +156,14 @@ const Profile = ({ user, updateUser }) => {
                       <Card>
                         <Card.Img
                           variant="top"
-                          src={`http://localhost:3000${quest.image}`}
-                          alt={quest.title}
+                          src={`http://localhost:3000${quest.imagePath}`}
+                          alt={quest.english}
                           style={{ height: '200px', objectFit: 'cover' }}
                         />
+                        <Card.Body>
+                          <Card.Title>{quest.english}</Card.Title>
+                          <Card.Text>{quest.russian}</Card.Text>
+                        </Card.Body>
                       </Card>
                     </Col>
                   ))}
@@ -172,6 +173,11 @@ const Profile = ({ user, updateUser }) => {
                   Вы еще не добавили ни одной карточки со словами.
                 </p>
               )}
+            </Card>
+
+            <Card className="mt-4 p-4">
+              <h3 className="mb-4">Создать новую карточку</h3>
+              <CreateCard userId={user.id} />
             </Card>
           </Col>
         </Row>
