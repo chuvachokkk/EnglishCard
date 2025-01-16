@@ -1,3 +1,10 @@
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import { Route } from 'react-router-dom'
+import { Routes } from 'react-router-dom'
+import ThemePage from './components/ThemePage/ThemePage'
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Profile from './components/Profile/Profile';
