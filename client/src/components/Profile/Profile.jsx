@@ -1,51 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Navbar,
-  Nav,
-  Container,
-  Row,
-  Col,
-  Card,
   Form,
   Button,
-  Alert,
+  Row,
+  Col,
+  Container,
   Image,
+  Card,
+  Alert,
 } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
-import CreateCard from '../CreateCard/CreateCard';
-import Progress from '../Progress/Progress';
 
-const Profile = ({ user }) => {
-  const [activeTab, setActiveTab] = useState('profile');
+const Profile = ({ user, updateUser }) => {
   const [username, setUsername] = useState(user?.username || '');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [profileImage, setProfileImage] = useState(user?.avatar || '');
+  const [userQuests, setUserQuests] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  const fetchUserQuests = async () => {
+    try {
+      const response = await axiosInstance.get(`/quests/user/${user.id}`);
+      setUserQuests(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке квестов:', error);
+      setError('Ошибка при загрузке квестов.');
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserQuests();
+    }
+  }, [user]);
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axiosInstance.put('/user/update', {
-        userId: user.id,
-        newUsername: username,
-        currentPassword,
-        newPassword,
-      });
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axiosInstance.put(
+        '/profile/update',
+        { username, password },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-      if (response.status === 200) {
-        setMessage('Профиль успешно обновлен!');
-        setError('');
-        setCurrentPassword('');
-        setNewPassword('');
-      }
+      const updatedUser = { ...user, username };
+      updateUser(updatedUser);
+
+      setMessage('Профиль успешно обновлен!');
+      setError('');
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
-      setError(
-        error.response?.data?.message || 'Ошибка при обновлении профиля'
-      );
+      setError('Ошибка при обновлении профиля.');
       setMessage('');
     }
   };
@@ -70,6 +81,8 @@ const Profile = ({ user }) => {
         );
 
         const updatedUser = { ...user, avatar: response.data.imageUrl };
+        updateUser(updatedUser);
+
         setProfileImage(response.data.imageUrl);
         setMessage('Фото профиля успешно обновлено!');
         setError('');
@@ -82,37 +95,9 @@ const Profile = ({ user }) => {
   };
 
   return (
-    <Container fluid>
-      <Navbar bg="light" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand>Личный кабинет</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link
-                active={activeTab === 'profile'}
-                onClick={() => setActiveTab('profile')}
-              >
-                Профиль
-              </Nav.Link>
-              <Nav.Link
-                active={activeTab === 'progress'}
-                onClick={() => setActiveTab('progress')}
-              >
-                Прогресс
-              </Nav.Link>
-              <Nav.Link
-                active={activeTab === 'create-card'}
-                onClick={() => setActiveTab('create-card')}
-              >
-                Создать карточку
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      {activeTab === 'profile' && (
+    <Container className="my-5">
+      <h1 className="text-center mb-4">Личный кабинет</h1>
+      {user ? (
         <Row>
           <Col md={4} className="mb-4">
             <Card className="text-center p-3">
@@ -151,23 +136,13 @@ const Profile = ({ user }) => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formCurrentPassword" className="mb-3">
-                  <Form.Label>Текущий пароль</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Введите текущий пароль"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formNewPassword" className="mb-3">
+                <Form.Group controlId="formPassword" className="mb-3">
                   <Form.Label>Новый пароль</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Введите новый пароль"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </Form.Group>
 
@@ -176,13 +151,37 @@ const Profile = ({ user }) => {
                 </Button>
               </Form>
             </Card>
+
+            <Card className="mt-4 p-4">
+              <h3 className="mb-4">Добавленные карточки</h3>
+              {userQuests.length > 0 ? (
+                <Row>
+                  {userQuests.map((quest) => (
+                    <Col key={quest.id} md={6} className="mb-4">
+                      <Card>
+                        <Card.Img
+                          variant="top"
+                          src={`http://localhost:3000${quest.image}`}
+                          alt={quest.title}
+                          style={{ height: '200px', objectFit: 'cover' }}
+                        />
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <p className="text-center">
+                  Вы еще не добавили ни одной карточки со словами.
+                </p>
+              )}
+            </Card>
           </Col>
         </Row>
+      ) : (
+        <Alert variant="warning" className="text-center">
+          Пожалуйста, войдите в систему.
+        </Alert>
       )}
-
-      {activeTab === 'progress' && <Progress user={user} />}
-
-      {activeTab === 'create-card' && <CreateCard userId={user.id} />}
     </Container>
   );
 };

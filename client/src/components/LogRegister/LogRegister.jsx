@@ -15,7 +15,6 @@ function LogRegister() {
     try {
       const response = await axiosInstance.post('/auth/login', {
         name: login,
-        name: login,
         password,
       });
 
@@ -23,7 +22,8 @@ function LogRegister() {
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify(response.data.user));
 
-        navigate('/profile');
+        // Перенаправляем на страницу с темами
+        navigate('/theme');
       }
     } catch (err) {
       console.error(err);
