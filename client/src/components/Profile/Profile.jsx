@@ -19,44 +19,42 @@ const Profile = ({ user, updateUser }) => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const fetchUserQuests = async () => {
-    try {
-      const response = await axiosInstance.get(`/quests/user/${user.id}`);
-      setUserQuests(response.data);
-    } catch (error) {
-      console.error('Ошибка при загрузке квестов:', error);
-      setError('Ошибка при загрузке квестов.');
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchUserQuests();
-    }
-  }, [user]);
+  
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      // const accessToken = localStorage.getItem('accessToken');
+      // console.log('Access Token:', accessToken);
+      console.log('Request Data:', {
+        userId: user.id,
+        newUsername: username,
+        // currentPassword,
+        // newPassword,
+      });
+
       const response = await axiosInstance.put(
-        '/profile/update',
-        { username, password },
+        `/user/update/`,
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+          newUsername: username,
+        },
+        // { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      const updatedUser = { ...user, username };
-      updateUser(updatedUser);
+      console.log('Response:', response.data);
 
-      setMessage('Профиль успешно обновлен!');
-      setError('');
+      if (response.status === 200) {
+        setMessage('Профиль успешно обновлен!');
+        setError('');
+        // setCurrentPassword('');
+        // setNewPassword('');
+      }
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
-      setError('Ошибка при обновлении профиля.');
+      setError(
+        error.response?.data?.message || 'Ошибка при обновлении профиля'
+      );
       setMessage('');
     }
   };

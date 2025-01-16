@@ -6,9 +6,21 @@ import Progress from './components/Progress/Progress';
 import Register from './components/Register/Register';
 import LogRegister from './components/LogRegister/LogRegister';
 import CardGame from './components/CardGame/CardGame';
+import { useEffect, useState } from 'react';
+import axiosInstance, { setAccessToken } from './services/axiosInstance';
 
 function App() {
-  const user = { id: 1, login: 'Ivan' };
+const [user,setUser] = useState(null)
+
+  useEffect(() => {
+    (async function () {
+      const res = await axiosInstance.get('/token/refresh');
+      if (res.data) {
+        setUser(res.data.user);
+        setAccessToken(res.data.accessToken);
+      }
+    })();
+  }, []);
 
   return (
     <Routes>

@@ -17,9 +17,9 @@ router.get('/profile', verifyAccessToken, async (req, res) => {
 });
 
 router.put('/update', verifyAccessToken, async (req, res) => {
-  console.log('Запрос на обновление профиля:', req.body);
 
-  const { userId, newUsername, currentPassword, newPassword } = req.body;
+  const { newUsername, newPassword} = req.body;
+  const userId = res.locals.user.id;
 
   try {
     const user = await User.findByPk(userId);
