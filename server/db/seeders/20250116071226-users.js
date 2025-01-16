@@ -6,13 +6,13 @@ module.exports = {
       'Users',
       [
         {
-          login: 'Ivan',
+          name: 'Ivan',
           password: 'hashed_password_here',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          login: 'Maria',
+          name: 'Maria',
           password: 'hashed_password_here',
           createdAt: new Date(),
           updatedAt: new Date(),

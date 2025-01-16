@@ -1,9 +1,7 @@
-// LogRegister.js
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import axiosInstance from '../../services/axiosInstance';
 import '../LogRegister/LogRegister.css';
 
 function LogRegister() {
@@ -13,29 +11,20 @@ function LogRegister() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
-      const response = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          login,
-          password,
-        }),
-        credentials: 'include',
+      const response = await axiosInstance.post('/auth/login', {
+        login,
+        password,
       });
 
-      console.log({ response });
-
       if (response.status === 200) {
-        localStorage.setItem('isAuthenticated', 'true'); 
-        navigate('/admin'); 
+        localStorage.setItem('isAuthenticated', 'true');
+        navigate('/admin');
       }
     } catch (err) {
-      console.log(err);
-      setError('Неверный логин или пароль');
+      console.error(err);
+      setError(err.response?.data?.message || 'Неверный логин или пароль');
     }
   };
 
@@ -69,7 +58,11 @@ function LogRegister() {
         <Button variant="primary" onClick={handleLogin} className="w-100 mb-2">
           Войти
         </Button>
-        <Button variant="success" onClick={handleRegister} className="w-100 mb-2">
+        <Button
+          variant="success"
+          onClick={handleRegister}
+          className="w-100 mb-2"
+        >
           Регистрация
         </Button>
       </Form>

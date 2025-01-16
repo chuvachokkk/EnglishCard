@@ -1,10 +1,9 @@
 const express = require('express');
 const userRouter = express.Router();
 const { User } = require('../../db/models');
-const authenticateToken = require('../middleware/verifyToken');
+const { verifyAccessToken } = require('../middleware/verifyToken');
 
-
-userRouter.get('/profile', authenticateToken, async (req, res) => {
+userRouter.get('/profile', verifyAccessToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
     if (!user) {

@@ -3,7 +3,6 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 const apiRouter = require('./routers/api.router');
 
 const { PORT } = process.env;
@@ -17,20 +16,14 @@ const corsConfig = {
 app.use(cors(corsConfig));
 
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }),
-);
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/api/', apiRouter);
 
-app.options('*', cors());
 app.listen(PORT, () => {
   console.log(`Сервер запущен на : ${PORT}`);
 });
+
 module.exports = app;

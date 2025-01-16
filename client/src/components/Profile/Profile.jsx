@@ -167,7 +167,6 @@ const Profile = ({ user }) => {
       {user ? (
         <Row>
           <Col md={8} className="mx-auto">
-            {/* Блок с аватаркой */}
             <Card className="p-4 mb-4 shadow-sm">
               <h3 className="mb-4">
                 <PersonCircle className="me-2" />
@@ -187,8 +186,6 @@ const Profile = ({ user }) => {
                 <Form.Control type="file" onChange={handleUploadAvatar} />
               </Form.Group>
             </Card>
-
-            {/* Блок с изменением логина */}
             <Card className="p-4 mb-4 shadow-sm">
               <h3 className="mb-4">
                 <Pencil className="me-2" />
@@ -208,8 +205,6 @@ const Profile = ({ user }) => {
                 Изменить логин
               </Button>
             </Card>
-
-            {/* Блок с изменением пароля */}
             <Card className="p-4 mb-4 shadow-sm">
               <h3 className="mb-4">
                 <Lock className="me-2" />
@@ -238,8 +233,6 @@ const Profile = ({ user }) => {
                 Изменить пароль
               </Button>
             </Card>
-
-            {/* Блок с созданием карточки */}
             <Card className="p-4 mb-4 shadow-sm">
               <h3 className="mb-4">
                 <PlusCircle className="me-2" />
@@ -290,8 +283,6 @@ const Profile = ({ user }) => {
                 </Button>
               </Form>
             </Card>
-
-            {/* Список созданных карточек */}
             <Card className="p-4 mb-4 shadow-sm">
               <h3 className="mb-4">
                 <PersonCircle className="me-2" />

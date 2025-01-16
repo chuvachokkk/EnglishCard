@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import axiosInstance from '../../services/axiosInstance'; // Импортируем axiosInstance
 import '../Register/Register.css';
 
 function Register() {
@@ -12,7 +12,6 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-
     if (name.trim() === '') {
       setError('Логин не может быть пустым');
       return;
@@ -34,25 +33,17 @@ function Register() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          login: name,
-          password,
-        }),
+      const response = await axiosInstance.post('/auth/register', {
+        name: name,
+        password,
       });
 
       if (response.status === 201) {
         navigate('/');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Ошибка регистрации');
       }
     } catch (err) {
-      setError('Ошибка регистрации');
+      console.error(err);
+      setError(err.response?.data?.message || 'Ошибка регистрации');
     }
   };
 
