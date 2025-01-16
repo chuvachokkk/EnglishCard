@@ -14,13 +14,15 @@ function LogRegister() {
     e.preventDefault();
     try {
       const response = await axiosInstance.post('/auth/login', {
-        login,
+        name: login,
         password,
       });
 
       if (response.status === 200) {
         localStorage.setItem('isAuthenticated', 'true');
-        navigate('/admin');
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        navigate('/profile');
       }
     } catch (err) {
       console.error(err);

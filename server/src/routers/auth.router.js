@@ -25,9 +25,9 @@ router.post('/register', async (req, res) => {
 
 // Вход
 router.post('/login', async (req, res) => {
-  const { login, password } = req.body;
+  const { name, password } = req.body;
   try {
-    const user = await User.findOne({ where: { login } });
+    const user = await User.findOne({ where: { name } });
 
     if (!user) {
       return res.status(401).json({ message: 'Неверный логин или пароль' });
