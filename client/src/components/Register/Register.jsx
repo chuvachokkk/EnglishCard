@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
-import axiosInstance from '../../services/axiosInstance'; // Импортируем axiosInstance
+import axiosInstance from '../../services/axiosInstance';
 import '../Register/Register.css';
 
 function Register() {
