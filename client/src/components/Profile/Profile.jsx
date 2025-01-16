@@ -7,7 +7,15 @@ import {
   Container,
   Card,
   Alert,
+  Image,
 } from 'react-bootstrap';
+import {
+  Pencil,
+  Lock,
+  Trash,
+  PlusCircle,
+  PersonCircle,
+} from 'react-bootstrap-icons'; // Иконки
 import axiosInstance from '../../services/axiosInstance';
 
 const Profile = ({ user }) => {
@@ -18,6 +26,10 @@ const Profile = ({ user }) => {
   const [themes, setThemes] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [newLogin, setNewLogin] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [avatar, setAvatar] = useState(user.avatar || '');
 
   // Загрузка карточек пользователя
   const fetchUserCards = async () => {
@@ -30,10 +42,10 @@ const Profile = ({ user }) => {
     }
   };
 
-
+  // Загрузка списка тем
   const fetchThemes = async () => {
     try {
-      const response = await axiosInstance.get('/theme'); 
+      const response = await axiosInstance.get('/theme');
       setThemes(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке тем:', error);
@@ -41,6 +53,7 @@ const Profile = ({ user }) => {
     }
   };
 
+  // Создание новой карточки
   const handleCreateCard = async (e) => {
     e.preventDefault();
     try {
@@ -63,6 +76,7 @@ const Profile = ({ user }) => {
     }
   };
 
+  // Удаление карточки
   const handleDeleteCard = async (cardId) => {
     try {
       await axiosInstance.delete(`/card/cards/${cardId}`);
@@ -76,6 +90,70 @@ const Profile = ({ user }) => {
     }
   };
 
+  // Изменение логина
+  const handleUpdateLogin = async () => {
+    try {
+      const response = await axiosInstance.put('/auth/update-login', {
+        userId: user.id,
+        newLogin,
+      });
+      setMessage(response.data.message);
+      setError('');
+      setNewLogin('');
+    } catch (error) {
+      console.error('Ошибка при изменении логина:', error);
+      setError('Ошибка при изменении логина.');
+      setMessage('');
+    }
+  };
+
+  // Изменение пароля
+  const handleUpdatePassword = async () => {
+    try {
+      const response = await axiosInstance.put('/auth/update-password', {
+        userId: user.id,
+        currentPassword,
+        newPassword,
+      });
+      setMessage(response.data.message);
+      setError('');
+      setCurrentPassword('');
+      setNewPassword('');
+    } catch (error) {
+      console.error('Ошибка при изменении пароля:', error);
+      setError('Ошибка при изменении пароля.');
+      setMessage('');
+    }
+  };
+
+  // Загрузка аватарки
+  const handleUploadAvatar = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('avatar', file);
+    formData.append('userId', user.id);
+
+    try {
+      const response = await axiosInstance.post(
+        '/user/upload-avatar',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      setAvatar(response.data.user.avatar);
+      setMessage('Аватарка успешно загружена!');
+      setError('');
+    } catch (error) {
+      console.error('Ошибка при загрузке аватарки:', error);
+      setError('Ошибка при загрузке аватарки.');
+      setMessage('');
+    }
+  };
+
+  // Загружаем карточки и темы при загрузке компонента
   useEffect(() => {
     if (user) {
       fetchUserCards();
@@ -88,10 +166,85 @@ const Profile = ({ user }) => {
       <h1 className="text-center mb-4">Личный кабинет</h1>
       {user ? (
         <Row>
-          <Col md={8}>
-            {/* Форма для создания новой карточки */}
-            <Card className="p-4">
-              <h3 className="mb-4">Создать новую карточку</h3>
+          <Col md={8} className="mx-auto">
+            {/* Блок с аватаркой */}
+            <Card className="p-4 mb-4 shadow-sm">
+              <h3 className="mb-4">
+                <PersonCircle className="me-2" />
+                Аватарка
+              </h3>
+              {avatar && (
+                <Image
+                  src={avatar}
+                  roundedCircle
+                  width={100}
+                  height={100}
+                  className="mb-3 d-block mx-auto"
+                />
+              )}
+              <Form.Group controlId="formAvatar" className="mb-3">
+                <Form.Label>Загрузить аватарку</Form.Label>
+                <Form.Control type="file" onChange={handleUploadAvatar} />
+              </Form.Group>
+            </Card>
+
+            {/* Блок с изменением логина */}
+            <Card className="p-4 mb-4 shadow-sm">
+              <h3 className="mb-4">
+                <Pencil className="me-2" />
+                Изменить логин
+              </h3>
+              <Form.Group controlId="formLogin" className="mb-3">
+                <Form.Label>Новый логин</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={newLogin}
+                  onChange={(e) => setNewLogin(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" onClick={handleUpdateLogin}>
+                <Pencil className="me-2" />
+                Изменить логин
+              </Button>
+            </Card>
+
+            {/* Блок с изменением пароля */}
+            <Card className="p-4 mb-4 shadow-sm">
+              <h3 className="mb-4">
+                <Lock className="me-2" />
+                Изменить пароль
+              </h3>
+              <Form.Group controlId="formCurrentPassword" className="mb-3">
+                <Form.Label>Текущий пароль</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formNewPassword" className="mb-3">
+                <Form.Label>Новый пароль</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" onClick={handleUpdatePassword}>
+                <Lock className="me-2" />
+                Изменить пароль
+              </Button>
+            </Card>
+
+            {/* Блок с созданием карточки */}
+            <Card className="p-4 mb-4 shadow-sm">
+              <h3 className="mb-4">
+                <PlusCircle className="me-2" />
+                Создать новую карточку
+              </h3>
               {message && <Alert variant="success">{message}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleCreateCard}>
@@ -132,19 +285,23 @@ const Profile = ({ user }) => {
                 </Form.Group>
 
                 <Button variant="primary" type="submit" className="w-100">
+                  <PlusCircle className="me-2" />
                   Создать карточку
                 </Button>
               </Form>
             </Card>
 
             {/* Список созданных карточек */}
-            <Card className="mt-4 p-4">
-              <h3 className="mb-4">Мои карточки</h3>
+            <Card className="p-4 mb-4 shadow-sm">
+              <h3 className="mb-4">
+                <PersonCircle className="me-2" />
+                Мои карточки
+              </h3>
               {cards.length > 0 ? (
                 <Row>
                   {cards.map((card) => (
                     <Col key={card.id} md={6} className="mb-4">
-                      <Card>
+                      <Card className="h-100 shadow-sm">
                         <Card.Body>
                           <Card.Title>{card.english}</Card.Title>
                           <Card.Text>{card.russian}</Card.Text>
@@ -152,6 +309,7 @@ const Profile = ({ user }) => {
                             variant="danger"
                             onClick={() => handleDeleteCard(card.id)}
                           >
+                            <Trash className="me-2" />
                             Удалить
                           </Button>
                         </Card.Body>
