@@ -1,7 +1,8 @@
 /* //Register */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap');
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: Comfortaa;
     background: linear-gradient(135deg, #4e3446, #2575fc);
     color: #fff;
     height: 100vh;
