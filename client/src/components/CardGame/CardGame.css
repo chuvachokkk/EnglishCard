@@ -1,86 +1,89 @@
 .card {
-    background-color: white;        
-    transition: background-color 0.3s ease, transform 0.3s ease; 
-  }
-  
-  .card.hovered {
-    background-color: yellow;         
-  }
-  
-  .card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); 
-  }
-  
+  background-color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
 
-  .card-title {
-    font-weight: bold;
-  }
-  
-  .card-text {
-    font-size: 18px;
-  }
-  
-  .input-answer {
-    text-align: center;
-  }
-  
-  .container {
-    margin-top: 20px;
-  }
+.card-body {
+  width: '400px';
+  height: '400px';
+  margin: auto;
+}
 
+.shadow.card {
+  transform: scale(0.5);
+  transform-origin: top;
+  width: '500px';
+  height: '400px';
+  margin: 0 auto;
+}
 
-  .button-animate {
-    background: linear-gradient(45deg, pink, violet); 
-    color: white; 
-    border: none;
-    padding: 10px 20px; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    transition: transform 0.2s, box-shadow 0.2s, background 0.5s; 
-    display: inline-block; 
-  }
-  
-  .button-animate:hover {
-    transform: scale(1.05); 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
-    background: linear-gradient(45deg, violet, pink); 
-  }
-  
-  .button-animate:active {
-    transform: scale(0.95);
-  }
+.card.hovered {
+  background-color: yellow;
+}
 
+.alert {
+  font-size: 40px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
 
-  @keyframes gradientAnimation {
-    0% {
-      background: linear-gradient(45deg, pink, violet);
-    }
-    50% {
-      background: linear-gradient(45deg, violet, pink);
-    }
-    100% {
-      background: linear-gradient(45deg, pink, violet);
-    }
-  }
-  
-  .button-animate {
+.input-answer {
+  background: linear-gradient(135deg, #f0e68c, #add8e6);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  font-size: 50px;
+  width: 100%;
+}
 
-    animation: gradientAnimation 5s infinite; 
-  }
+.container {
+  margin-top: 20px;
+}
 
+.button-animate {
+  background: linear-gradient(45deg, pink, violet);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.5s;
+  display: inline-block;
+  font-size: 50px;
+  width: 100%;
+  margin: 10px 0;
+}
 
-  .input-answer {
-    background: linear-gradient(135deg, #f0e68c, #add8e6); 
-    border: none; 
-    border-radius: 10px; 
-    padding: 12px; 
-    transition: box-shadow 0.3s, transform 0.3s; 
-    font-size: 18px; 
+.button-animate:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, violet, pink);
+}
+
+.button-animate:active {
+  transform: scale(0.95);
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background: linear-gradient(45deg, pink, violet);
   }
-  
-  .input-answer:focus {
-    outline: none;
-    box-shadow: 0 0 10px rgba(0, 174, 239, 0.5); 
-    transform: scale(1.02); 
+  50% {
+    background: linear-gradient(45deg, violet, pink);
   }
+  100% {
+    background: linear-gradient(45deg, pink, violet);
+  }
+}
+
+.button-animate {
+  animation: gradientAnimation 5s infinite;
+}
+
+.img-fluid {
+  max-height: 1200px;
+  width: auto;
+  object-fit: cover;
+}
+

@@ -10,7 +10,7 @@ router.get('/user/:userId', async (req, res) => {
       include: [{ model: Theme, attributes: ['name'] }],
     });
 
-    console.log('Results from DB:', results); // Логируем данные из базы
+    console.log('Results from DB:', results);
 
     const formattedResults = results.map((result) => ({
       themeId: result.themeId,
@@ -19,9 +19,24 @@ router.get('/user/:userId', async (req, res) => {
       totalCards: result.totalCards || 1,
     }));
 
-    console.log('Formatted Results:', formattedResults); // Логируем отформатированные данные
+    console.log('Formatted Results:', formattedResults);
 
     res.json(formattedResults);
+  } catch (error) {
+    console.error('Ошибка при загрузке результатов:', error);
+    res.status(500).json({ error: 'Ошибка при загрузке результатов' });
+  }
+});
+
+router.get('/user/:userId/theme/:themeId', async (req, res) => {
+  const { userId, themeId } = req.params;
+
+  try {
+    const results = await Result.findAll({
+      where: { userId, themeId },
+    });
+
+    res.json(results);
   } catch (error) {
     console.error('Ошибка при загрузке результатов:', error);
     res.status(500).json({ error: 'Ошибка при загрузке результатов' });

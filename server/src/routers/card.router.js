@@ -143,7 +143,7 @@ router.post('/result', async (req, res) => {
 
     if (result) {
       if (isCorrect) {
-        result.result += 1;
+        result.result = (result.result || 0) + 1;
       }
       result.totalCards += 1;
       await result.save();
@@ -160,6 +160,18 @@ router.post('/result', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при сохранении результата:', error);
     res.status(500).json({ error: 'Ошибка при сохранении результата' });
+  }
+});
+
+router.get('/theme/:themeId', async (req, res) => {
+  const { themeId } = req.params;
+
+  try {
+    const cards = await Card.findAll({ where: { themeId } });
+    res.json(cards);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Ошибка при загрузке карточек' });
   }
 });
 

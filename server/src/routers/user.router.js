@@ -24,26 +24,6 @@ router.get('/profile', verifyAccessToken, async (req, res) => {
   }
 });
 
-// router.post('/upload-image', uploadAvatar.single('file'), async (req, res) => {
-//   try {
-//     const userId = res.locals.user.id;
-//     const imagePath = req.file ? `/uploads/avatar/${req.file.filename}` : null;
-
-//     const user = await User.findByPk(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: 'Пользователь не найден' });
-//     }
-
-//     user.avatar = imagePath;
-//     await user.save();
-
-//     res.json({ imageUrl: imagePath });
-//   } catch (error) {
-//     console.error('Ошибка при загрузке изображения:', error);
-//     res.status(500).json({ message: 'Ошибка при загрузке изображения' });
-//   }
-// });
-
 router.put('/update', verifyAccessToken, async (req, res) => {
   const { newUsername, newPassword } = req.body;
   const userId = res.locals.user.id;
