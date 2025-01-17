@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { Card, Form, Button, Alert, Container, Image } from 'react-bootstrap';
+import '../CardGame/CardGame.css'; // Подключаем CSS файл
 
 const CardGame = ({ user }) => {
   const { themeId } = useParams();
@@ -33,7 +34,6 @@ const CardGame = ({ user }) => {
     setIsCorrect(isAnswerCorrect);
 
     try {
-      // Отправляем результат на сервер
       await axiosInstance.post('/card/result', {
         userId: user.id,
         cardId: currentCard.id,
@@ -73,10 +73,10 @@ const CardGame = ({ user }) => {
   }
 
   return (
-    <Container className="mt-1">
-      <Card className="shadow">
+    <Container className="mt-1 container">
+      <Card className="shadow card"> {}
         <Card.Body>
-          <Card.Title className="text-center">
+          <Card.Title className="text-center card-title">
             Карточка {currentCardIndex + 1} из {cards.length}
           </Card.Title>
           <div className="d-flex justify-content-center mb-3">
@@ -90,30 +90,40 @@ const CardGame = ({ user }) => {
               style={{ maxHeight: '1000px', objectFit: 'cover' }}
             />
           </div>
-
-          <Card.Text className="text-center fs-4">
+  
+          <Card.Text className="text-center fs-4 card-text">
             Слово на английском: <strong>{currentCard.english}</strong>
           </Card.Text>
-
+  
           <Form.Group className="mb-3">
-            <Form.Control
-              type="text"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="Напиши на русском"
-              className="text-center"
-            />
+          <Form.Control
+  type="text"
+  value={userAnswer}
+  onChange={(e) => setUserAnswer(e.target.value)}
+  placeholder="Напиши на русском"
+  className="text-center input-answer" 
+/>
           </Form.Group>
-
+  
           <div className="d-grid gap-2">
-            <Button variant="primary" onClick={handleCheckAnswer} size="lg">
-              Проверить
-            </Button>
-            <Button variant="secondary" onClick={handleExit} size="lg">
-              Выход
-            </Button>
+          <Button 
+  variant="primary" 
+  onClick={handleCheckAnswer} 
+  size="lg" 
+  className="button-animate"
+>
+  Проверить
+</Button>
+<Button 
+  variant="secondary" 
+  onClick={handleExit} 
+  size="lg" 
+  className="button-animate"
+>
+  Выход
+</Button>
           </div>
-
+  
           {isCorrect !== null && (
             <Alert
               variant={isCorrect ? 'success' : 'danger'}

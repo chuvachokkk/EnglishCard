@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
+import '../CreateCard/CreateCard.css'; 
 
 const CreateCard = ({ userId }) => {
   const [english, setEnglish] = useState('');
@@ -60,7 +61,7 @@ const CreateCard = ({ userId }) => {
   }, []);
 
   return (
-    <Form onSubmit={handleCreateCard}>
+    <Form onSubmit={handleCreateCard} className="create-card-form">
       <h3>Создать новую карточку</h3>
       {message && <Alert variant="success">{message}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
@@ -108,7 +109,7 @@ const CreateCard = ({ userId }) => {
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit" className="w-100">
+      <Button variant="primary" type="submit" className="w-100 create-card-button">
         Создать карточку
       </Button>
     </Form>
