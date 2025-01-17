@@ -51,7 +51,7 @@ function NavBar({ user, setUser }) {
             style={{
               margin: 0,
               color: '#FFA500',
-              fontFamily: 'Arial, sans-serif',
+              // fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
             }}
           >
@@ -68,7 +68,7 @@ function NavBar({ user, setUser }) {
             style={{
               color: '#FFA500',
               borderColor: '#FFA500',
-              fontFamily: 'Arial, sans-serif',
+              // fontFamily: 'Arial, sans-serif',
             }}
           >
             Результаты
@@ -83,7 +83,7 @@ function NavBar({ user, setUser }) {
                 style={{
                   backgroundColor: '#FFA500',
                   borderColor: '#FFA500',
-                  fontFamily: 'Arial, sans-serif',
+                  // fontFamily: 'Arial, sans-serif',
                 }}
               >
                 Привет, {user.name}!
@@ -92,7 +92,7 @@ function NavBar({ user, setUser }) {
                 variant="danger"
                 onClick={handleLogout}
                 style={{
-                  fontFamily: 'Arial, sans-serif',
+                  // fontFamily: 'Arial, sans-serif',
                 }}
               >
                 Выход
@@ -105,7 +105,7 @@ function NavBar({ user, setUser }) {
               style={{
                 backgroundColor: '#FFA500',
                 borderColor: '#FFA500',
-                fontFamily: 'Arial, sans-serif',
+                // fontFamily: 'Arial, sans-serif',
               }}
             >
               Профиль

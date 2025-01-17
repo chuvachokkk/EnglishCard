@@ -2,10 +2,12 @@ import axiosInstance from '../../services/axiosInstance';
 import React, { useEffect, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import '../ThemePage/ThemePage.css'; 
 
 export default function ThemePage({ user }) {
   const [themeCard, setThemeCard] = useState([]);
-
+  const [selectedThemeId, setSelectedThemeId] = useState(null); 
+  const [hoveredThemeId, setHoveredThemeId] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,54 +19,33 @@ export default function ThemePage({ user }) {
 
   if (!user) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          gap: '20px',
-          padding: '20px',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '90vh',
-        }}
-      >
+      <div className="auth-message">
         Авторизуйтесь
       </div>
     );
   }
 
+  const handleSelect = (id) => {
+    setSelectedThemeId(id); 
+    navigate(`/card/${id}`); 
+  };
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '20px',
-        padding: '20px',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '90vh',
-      }}
-    >
+    <div className="theme-page-container">
       {themeCard.map((theme) => (
         <Card
           key={theme.id}
+          className={`theme-card ${selectedThemeId === theme.id ? 'selected' : ''}`} 
           style={{
-            width: '22rem',
-            height: '28rem',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            transition: 'transform 0.2s',
+            backgroundColor: hoveredThemeId === theme.id ? 'yellow' : '' 
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = 'scale(1.05)')
-          }
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          onMouseEnter={() => setHoveredThemeId(theme.id)} 
+          onMouseLeave={() => setHoveredThemeId(null)} 
         >
           <Card.Img
             variant="top"
-            src={`http://localhost:3000${theme.imagePath}`} // Используем imagePath из данных темы
-            style={{
-              height: '200px',
-              objectFit: 'cover',
-            }}
+            src={`http://localhost:3000${theme.imagePath}`} 
+            className="theme-card-img"
           />
           <Card.Body
             style={{
@@ -73,22 +54,13 @@ export default function ThemePage({ user }) {
               justifyContent: 'space-between',
             }}
           >
-            <Card.Title
-              style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-              }}
-            >
+            <Card.Title className="theme-card-title">
               {theme.name}
             </Card.Title>
             <Button
               variant="primary"
-              onClick={() => navigate(`/card/${theme.id}`)}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '1.1rem',
-              }}
+              onClick={() => handleSelect(theme.id)} 
+              className="theme-card-button"
             >
               Выбрать
             </Button>

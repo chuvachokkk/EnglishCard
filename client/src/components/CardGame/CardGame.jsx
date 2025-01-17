@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { Card, Form, Button, Alert, Container, Image } from 'react-bootstrap';
 import '../CardGame/CardGame.css';
-import 'animate.css';
 
 const CardGame = ({ user }) => {
   const { themeId } = useParams();
