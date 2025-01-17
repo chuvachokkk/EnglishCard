@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { Card, Form, Button, Alert, Container, Image } from 'react-bootstrap';
-import '../CardGame/CardGame.css'; // Подключаем CSS файл
+import '../CardGame/CardGame.css';
 
 const CardGame = ({ user }) => {
   const { themeId } = useParams();
